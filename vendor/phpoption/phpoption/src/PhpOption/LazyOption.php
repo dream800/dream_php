@@ -18,8 +18,6 @@
 
 namespace PhpOption;
 
-use Traversable;
-
 /**
  * @template T
  *
@@ -43,7 +41,7 @@ final class LazyOption extends Option
      *
      * @return LazyOption<S>
      */
-    public static function create($callback, array $arguments = []): self
+    public static function create($callback, array $arguments = [])
     {
         return new self($callback, $arguments);
     }
@@ -62,12 +60,12 @@ final class LazyOption extends Option
         $this->arguments = $arguments;
     }
 
-    public function isDefined(): bool
+    public function isDefined()
     {
         return $this->option()->isDefined();
     }
 
-    public function isEmpty(): bool
+    public function isEmpty()
     {
         return $this->option()->isEmpty();
     }
@@ -99,7 +97,7 @@ final class LazyOption extends Option
 
     public function ifDefined($callable)
     {
-        $this->option()->forAll($callable);
+        $this->option()->ifDefined($callable);
     }
 
     public function forAll($callable)
@@ -137,10 +135,7 @@ final class LazyOption extends Option
         return $this->option()->reject($value);
     }
 
-    /**
-     * @return Traversable<T>
-     */
-    public function getIterator(): Traversable
+    public function getIterator()
     {
         return $this->option()->getIterator();
     }
@@ -158,15 +153,14 @@ final class LazyOption extends Option
     /**
      * @return Option<T>
      */
-    private function option(): Option
+    private function option()
     {
         if (null === $this->option) {
-            /** @var mixed */
-            $option = call_user_func_array($this->callback, $this->arguments);
-            if ($option instanceof Option) {
-                $this->option = $option;
-            } else {
-                throw new \RuntimeException(sprintf('Expected instance of %s', Option::class));
+            $this->option = call_user_func_array($this->callback, $this->arguments);
+            if (!$this->option instanceof Option) {
+                $this->option = null;
+
+                throw new \RuntimeException(sprintf('Expected instance of \%s', Option::class));
             }
         }
 

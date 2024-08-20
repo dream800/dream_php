@@ -24,12 +24,9 @@
  * - Serhan Apaydın
  * - JD Isaacks
  * - tomhorvat
- * - Stjepan Majdak
+ * - Stjepan
  * - Vanja Retkovac (vr00)
  */
-
-use Carbon\CarbonInterface;
-
 return [
     'year' => ':count godinu|:count godine|:count godina',
     'y' => ':count god.|:count god.|:count god.',
@@ -51,26 +48,22 @@ return [
     'after' => ':time poslije',
     'before' => ':time prije',
     'diff_now' => 'sad',
-    'diff_today' => 'danas',
-    'diff_today_regexp' => 'danas(?:\\s+u)?',
     'diff_yesterday' => 'jučer',
-    'diff_yesterday_regexp' => 'jučer(?:\\s+u)?',
     'diff_tomorrow' => 'sutra',
-    'diff_tomorrow_regexp' => 'sutra(?:\\s+u)?',
     'diff_before_yesterday' => 'prekjučer',
     'diff_after_tomorrow' => 'prekosutra',
     'formats' => [
         'LT' => 'H:mm',
         'LTS' => 'H:mm:ss',
-        'L' => 'D. M. YYYY.',
-        'LL' => 'D. MMMM YYYY.',
-        'LLL' => 'D. MMMM YYYY. H:mm',
-        'LLLL' => 'dddd, D. MMMM YYYY. H:mm',
+        'L' => 'DD.MM.YYYY',
+        'LL' => 'D. MMMM YYYY',
+        'LLL' => 'D. MMMM YYYY H:mm',
+        'LLLL' => 'dddd, D. MMMM YYYY H:mm',
     ],
     'calendar' => [
         'sameDay' => '[danas u] LT',
         'nextDay' => '[sutra u] LT',
-        'nextWeek' => function (CarbonInterface $date) {
+        'nextWeek' => function (\Carbon\CarbonInterface $date) {
             switch ($date->dayOfWeek) {
                 case 0:
                     return '[u] [nedjelju] [u] LT';
@@ -83,7 +76,7 @@ return [
             }
         },
         'lastDay' => '[jučer u] LT',
-        'lastWeek' => function (CarbonInterface $date) {
+        'lastWeek' => function (\Carbon\CarbonInterface $date) {
             switch ($date->dayOfWeek) {
                 case 0:
                 case 3:

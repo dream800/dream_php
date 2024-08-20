@@ -6,11 +6,9 @@
 
 namespace Whoops\Exception;
 
-use Whoops\Inspector\InspectorFactory;
-use Whoops\Inspector\InspectorInterface;
 use Whoops\Util\Misc;
 
-class Inspector implements InspectorInterface
+class Inspector
 {
     /**
      * @var \Throwable
@@ -33,18 +31,11 @@ class Inspector implements InspectorInterface
     private $previousExceptions;
 
     /**
-     * @var \Whoops\Inspector\InspectorFactoryInterface|null
-     */
-    protected $inspectorFactory;
-
-    /**
      * @param \Throwable $exception The exception to inspect
-     * @param \Whoops\Inspector\InspectorFactoryInterface $factory
      */
-    public function __construct($exception, $factory = null)
+    public function __construct($exception)
     {
         $this->exception = $exception;
-        $this->inspectorFactory = $factory ?: new InspectorFactory();
     }
 
     /**
@@ -146,7 +137,7 @@ class Inspector implements InspectorInterface
             $previousException = $this->exception->getPrevious();
 
             if ($previousException) {
-                $this->previousExceptionInspector = $this->inspectorFactory->create($previousException);
+                $this->previousExceptionInspector = new Inspector($previousException);
             }
         }
 
@@ -176,12 +167,9 @@ class Inspector implements InspectorInterface
     /**
      * Returns an iterator for the inspected exception's
      * frames.
-     * 
-     * @param array<callable> $frameFilters
-     * 
      * @return \Whoops\Exception\FrameCollection
      */
-    public function getFrames(array $frameFilters = [])
+    public function getFrames()
     {
         if ($this->frames === null) {
             $frames = $this->getTrace($this->exception);
@@ -237,13 +225,6 @@ class Inspector implements InspectorInterface
                 $newFrames->prependFrames($outerFrames->topDiff($newFrames));
                 $this->frames = $newFrames;
             }
-
-            // Apply frame filters callbacks on the frames stack
-            if (!empty($frameFilters)) {
-                foreach ($frameFilters as $filterCallback) {
-                    $this->frames->filter($filterCallback);
-                }
-            }
         }
 
         return $this->frames;
@@ -270,7 +251,7 @@ class Inspector implements InspectorInterface
             return $traces;
         }
 
-        if (!extension_loaded('xdebug') || !function_exists('xdebug_is_enabled') || !xdebug_is_enabled()) {
+        if (!extension_loaded('xdebug') || !xdebug_is_enabled()) {
             return $traces;
         }
 
@@ -320,6 +301,7 @@ class Inspector implements InspectorInterface
      * Determine if the frame can be used to fill in previous frame's missing info
      * happens for call_user_func and call_user_func_array usages (PHP Bug #44428)
      *
+     * @param array $frame
      * @return bool
      */
     protected function isValidNextFrame(array $frame)

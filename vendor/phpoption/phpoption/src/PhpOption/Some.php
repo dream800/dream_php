@@ -45,17 +45,17 @@ final class Some extends Option
      *
      * @return Some<U>
      */
-    public static function create($value): self
+    public static function create($value)
     {
         return new self($value);
     }
 
-    public function isDefined(): bool
+    public function isDefined()
     {
         return true;
     }
 
-    public function isEmpty(): bool
+    public function isEmpty()
     {
         return false;
     }
@@ -87,7 +87,7 @@ final class Some extends Option
 
     public function ifDefined($callable)
     {
-        $this->forAll($callable);
+        $callable($this->value);
     }
 
     public function forAll($callable)
@@ -104,7 +104,6 @@ final class Some extends Option
 
     public function flatMap($callable)
     {
-        /** @var mixed */
         $rs = $callable($this->value);
         if (!$rs instanceof Option) {
             throw new \RuntimeException('Callables passed to flatMap() must return an Option. Maybe you should use map() instead?');
@@ -149,10 +148,7 @@ final class Some extends Option
         return $this;
     }
 
-    /**
-     * @return ArrayIterator<int, T>
-     */
-    public function getIterator(): ArrayIterator
+    public function getIterator()
     {
         return new ArrayIterator([$this->value]);
     }

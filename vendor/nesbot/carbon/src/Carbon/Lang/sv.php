@@ -45,11 +45,8 @@ return [
     'after' => ':time efter',
     'before' => ':time före',
     'diff_now' => 'nu',
-    'diff_today' => 'I dag',
     'diff_yesterday' => 'i går',
-    'diff_yesterday_regexp' => 'I går',
     'diff_tomorrow' => 'i morgon',
-    'diff_tomorrow_regexp' => 'I morgon',
     'formats' => [
         'LT' => 'HH:mm',
         'LTS' => 'HH:mm:ss',
@@ -70,7 +67,7 @@ return [
         $lastDigit = $number % 10;
 
         return $number.(
-            ((int) ($number % 100 / 10) === 1) ? 'e' : (
+            (~~($number % 100 / 10) === 1) ? 'e' : (
                 ($lastDigit === 1 || $lastDigit === 2) ? 'a' : 'e'
             )
         );

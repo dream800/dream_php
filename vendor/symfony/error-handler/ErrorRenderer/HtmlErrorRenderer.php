@@ -15,7 +15,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\ErrorHandler\Exception\FlattenException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Debug\FileLinkFormatter;
 use Symfony\Component\HttpKernel\Log\DebugLoggerInterface;
 
 /**
@@ -41,9 +40,8 @@ class HtmlErrorRenderer implements ErrorRendererInterface
     private $logger;
 
     /**
-     * @param bool|callable                 $debug          The debugging mode as a boolean or a callable that should return it
-     * @param string|FileLinkFormatter|null $fileLinkFormat
-     * @param bool|callable                 $outputBuffer   The output buffer as a string or a callable that should return it
+     * @param bool|callable $debug        The debugging mode as a boolean or a callable that should return it
+     * @param bool|callable $outputBuffer The output buffer as a string or a callable that should return it
      */
     public function __construct($debug = false, string $charset = null, $fileLinkFormat = null, string $projectDir = null, $outputBuffer = '', LoggerInterface $logger = null)
     {
@@ -56,8 +54,8 @@ class HtmlErrorRenderer implements ErrorRendererInterface
         }
 
         $this->debug = $debug;
-        $this->charset = $charset ?: (\ini_get('default_charset') ?: 'UTF-8');
-        $this->fileLinkFormat = $fileLinkFormat ?: (\ini_get('xdebug.file_link_format') ?: get_cfg_var('xdebug.file_link_format'));
+        $this->charset = $charset ?: (ini_get('default_charset') ?: 'UTF-8');
+        $this->fileLinkFormat = $fileLinkFormat ?: (ini_get('xdebug.file_link_format') ?: get_cfg_var('xdebug.file_link_format'));
         $this->projectDir = $projectDir;
         $this->outputBuffer = $outputBuffer;
         $this->logger = $logger;
@@ -184,7 +182,7 @@ class HtmlErrorRenderer implements ErrorRendererInterface
 
     private function escape(string $string): string
     {
-        return htmlspecialchars($string, \ENT_COMPAT | \ENT_SUBSTITUTE, $this->charset);
+        return htmlspecialchars($string, ENT_COMPAT | ENT_SUBSTITUTE, $this->charset);
     }
 
     private function abbrClass(string $class): string
@@ -319,7 +317,7 @@ class HtmlErrorRenderer implements ErrorRendererInterface
         if ($context && false !== strpos($message, '{')) {
             $replacements = [];
             foreach ($context as $key => $val) {
-                if (\is_scalar($val)) {
+                if (is_scalar($val)) {
                     $replacements['{'.$key.'}'] = $val;
                 }
             }
@@ -343,7 +341,7 @@ class HtmlErrorRenderer implements ErrorRendererInterface
 
     private function include(string $name, array $context = []): string
     {
-        extract($context, \EXTR_SKIP);
+        extract($context, EXTR_SKIP);
         ob_start();
         include __DIR__.'/../Resources/'.$name;
 

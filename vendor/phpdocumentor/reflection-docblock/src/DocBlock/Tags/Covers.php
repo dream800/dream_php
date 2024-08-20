@@ -18,11 +18,8 @@ use phpDocumentor\Reflection\DocBlock\DescriptionFactory;
 use phpDocumentor\Reflection\Fqsen;
 use phpDocumentor\Reflection\FqsenResolver;
 use phpDocumentor\Reflection\Types\Context as TypeContext;
-use phpDocumentor\Reflection\Utils;
 use Webmozart\Assert\Assert;
-
-use function array_key_exists;
-use function explode;
+use function preg_split;
 
 /**
  * Reflection class for a @covers tag in a Docblock.
@@ -49,36 +46,24 @@ final class Covers extends BaseTag implements Factory\StaticMethod
         ?DescriptionFactory $descriptionFactory = null,
         ?FqsenResolver $resolver = null,
         ?TypeContext $context = null
-    ): self {
-        Assert::stringNotEmpty($body);
+    ) : self {
+        Assert::notEmpty($body);
         Assert::notNull($descriptionFactory);
         Assert::notNull($resolver);
 
-        $parts = Utils::pregSplit('/\s+/Su', $body, 2);
+        $parts = preg_split('/\s+/Su', $body, 2);
+        Assert::isArray($parts);
 
         return new static(
-            self::resolveFqsen($parts[0], $resolver, $context),
+            $resolver->resolve($parts[0], $context),
             $descriptionFactory->create($parts[1] ?? '', $context)
         );
-    }
-
-    private static function resolveFqsen(string $parts, ?FqsenResolver $fqsenResolver, ?TypeContext $context): Fqsen
-    {
-        Assert::notNull($fqsenResolver);
-        $fqsenParts = explode('::', $parts);
-        $resolved = $fqsenResolver->resolve($fqsenParts[0], $context);
-
-        if (!array_key_exists(1, $fqsenParts)) {
-            return $resolved;
-        }
-
-        return new Fqsen($resolved . '::' . $fqsenParts[1]);
     }
 
     /**
      * Returns the structural element this tag refers to.
      */
-    public function getReference(): Fqsen
+    public function getReference() : Fqsen
     {
         return $this->refers;
     }
@@ -86,16 +71,8 @@ final class Covers extends BaseTag implements Factory\StaticMethod
     /**
      * Returns a string representation of this tag.
      */
-    public function __toString(): string
+    public function __toString() : string
     {
-        if ($this->description) {
-            $description = $this->description->render();
-        } else {
-            $description = '';
-        }
-
-        $refers = (string) $this->refers;
-
-        return $refers . ($description !== '' ? ($refers !== '' ? ' ' : '') . $description : '');
+        return $this->refers . ($this->description ? ' ' . $this->description->render() : '');
     }
 }

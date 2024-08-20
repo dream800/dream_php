@@ -11,6 +11,26 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', 'HomeController@index');
+Route::get('/a', function () {
+    return view('a');
 });
+
+
+Route::get('post/create', 'PostController@create');
+Route::post('post/store', 'PostController@store');
+
+Route::post('user/login', 'Admin\LoginController@login');
+Route::post('user/logout', 'Admin\LoginController@logout');
+Route::get('user/info', 'Admin\LoginController@info');
+
+
+
+
+
+
+
+
+
+Route::get('zhibo/index', 'Zhibo\IndexController@index');
+Route::get('zhibo/ad', 'Zhibo\IndexController@ad');

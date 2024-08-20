@@ -51,7 +51,6 @@ class RouteCollection implements \IteratorAggregate, \Countable
      *
      * @return \ArrayIterator|Route[] An \ArrayIterator object for iterating over routes
      */
-    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return new \ArrayIterator($this->routes);
@@ -62,7 +61,6 @@ class RouteCollection implements \IteratorAggregate, \Countable
      *
      * @return int The number of routes
      */
-    #[\ReturnTypeWillChange]
     public function count()
     {
         return \count($this->routes);
@@ -99,7 +97,7 @@ class RouteCollection implements \IteratorAggregate, \Countable
      */
     public function get($name)
     {
-        return $this->routes[$name] ?? null;
+        return isset($this->routes[$name]) ? $this->routes[$name] : null;
     }
 
     /**
@@ -142,7 +140,7 @@ class RouteCollection implements \IteratorAggregate, \Countable
     public function addPrefix($prefix, array $defaults = [], array $requirements = [])
     {
         if (null === $prefix) {
-            @trigger_error(sprintf('Passing null as $prefix to %s is deprecated in Symfony 4.4 and will trigger a TypeError in 5.0.', __METHOD__), \E_USER_DEPRECATED);
+            @trigger_error(sprintf('Passing null as $prefix to %s is deprecated in Symfony 4.4 and will trigger a TypeError in 5.0.', __METHOD__), E_USER_DEPRECATED);
         }
 
         $prefix = trim(trim($prefix), '/');
